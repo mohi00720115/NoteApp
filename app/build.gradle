@@ -31,6 +31,10 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
+    buildFeatures {
+        viewBinding true
+        dataBinding true
+    }
 }
 
 dependencies {
@@ -47,5 +51,15 @@ dependencies {
     kapt "androidx.room:room-compiler:2.5.2"
     // Circle image view
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+    //Lifecycle + ViewModel & LiveData
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.6.2"
+    //Navigation Component
+    implementation "androidx.navigation:navigation-fragment-ktx:2.7.4"
+    implementation "androidx.navigation:navigation-ui-ktx:2.7.4"
 
+
+}
+kapt {
+    correctErrorTypes true
 }
