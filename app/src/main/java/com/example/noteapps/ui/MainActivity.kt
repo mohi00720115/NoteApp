@@ -1,9 +1,10 @@
-package com.example.noteapps
+package com.example.noteapps.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
+import com.example.noteapps.R
 import com.example.noteapps.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {

@@ -1,4 +1,4 @@
-package com.example.noteapps
+package com.example.noteapps.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import com.example.noteapps.R
 import com.example.noteapps.databinding.FragmentHomeBinding
 
 

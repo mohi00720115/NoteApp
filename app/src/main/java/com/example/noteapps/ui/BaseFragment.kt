@@ -1,4 +1,4 @@
-package com.example.noteapps
+package com.example.noteapps.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
