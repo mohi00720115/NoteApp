@@ -2,6 +2,7 @@
     <string name="app_name">NotesApp</string>
     <string name="notes">My Notes</string>
     <string name="notes_title">Notes Title</string>
+    <string name="date">Date</string>
     <string name="notes_sub_title">Notes Sub Title</string>
     <string name="notes_desc">Enter Notes Here</string>
     <string name="search">Search your notes</string>

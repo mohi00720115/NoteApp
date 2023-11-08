@@ -2,6 +2,7 @@
 <resources>
     <!--  dp  -->
     <dimen name="_5sdp">5dp</dimen>
+    <dimen name="_8sdp">8dp</dimen>
     <dimen name="_10sdp">10dp</dimen>
     <dimen name="_12sdp">12dp</dimen>
     <dimen name="_14sdp">14dp</dimen>
@@ -12,6 +13,7 @@
     <dimen name="_24sdp">24dp</dimen>
     <!--  sp  -->
     <dimen name="_5ssp">5sp</dimen>
+    <dimen name="_8ssp">8sp</dimen>
     <dimen name="_10ssp">10sp</dimen>
     <dimen name="_12ssp">12sp</dimen>
     <dimen name="_14ssp">14sp</dimen>
