@@ -16,6 +16,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
         binding = DataBindingUtil.bind(view)!!
         navController = findNavController()
+
+        binding.fabCreateNote.setOnClickListener {
+            navController.navigate(R.id.action_homeFragment_to_createNoteFragment)
+        }
     }
 
 }
