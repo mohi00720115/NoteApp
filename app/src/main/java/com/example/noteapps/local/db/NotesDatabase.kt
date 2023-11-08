@@ -10,7 +10,7 @@ import com.example.noteapps.local.entity.Notes
 @Database(entities = [Notes::class], version = 1, exportSchema = false)
 abstract class NotesDatabase() : RoomDatabase() {
     companion object {
-        var noteDatabase: NotesDatabase? = null
+        private var noteDatabase: NotesDatabase? = null
 
         @Synchronized
         fun getDatabase(context: Context): NotesDatabase {
@@ -24,5 +24,5 @@ abstract class NotesDatabase() : RoomDatabase() {
             return noteDatabase!!
         }
     }
-    abstract fun noteDao() : NoteDao
+    abstract fun noteDao(): NoteDao
 }
