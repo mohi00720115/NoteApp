@@ -17,8 +17,8 @@
             android:id="@+id/img_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_20sdp"
             android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_20sdp"
             android:layout_marginBottom="@dimen/_10sdp"
             android:src="@drawable/ic_back"
             app:layout_constraintStart_toStartOf="parent"
@@ -42,14 +42,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_10sdp"
+            android:background="@null"
             android:ellipsize="end"
             android:fontFamily="@font/manrope_bold"
             android:hint="@string/notes_title"
             android:maxLines="1"
             android:padding="@dimen/_10sdp"
-            android:background="@null"
             android:textColor="@color/white"
-            android:textColorHint="@color/ColorGray"
+            android:textColorHint="@color/colorGray"
             android:textSize="@dimen/_18ssp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -59,19 +59,19 @@
             android:id="@+id/tv_date_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_5sdp"
             android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
             android:layout_marginEnd="@dimen/_10sdp"
             android:layout_marginBottom="@dimen/_5sdp"
-            android:paddingStart="@dimen/_10sdp"
             android:ellipsize="end"
             android:fontFamily="@font/manrope_bold"
             android:hint="@string/date"
-            android:maxLines="1"
-            android:textColor="@color/ColorGray"
-            android:textColorHint="@color/ColorGray"
-            android:textSize="@dimen/_8ssp"
             android:inputType="text"
+            android:maxLines="1"
+            android:paddingStart="@dimen/_10sdp"
+            android:textColor="@color/colorGray"
+            android:textColorHint="@color/colorGray"
+            android:textSize="@dimen/_8ssp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/et_note_title" />
@@ -81,8 +81,8 @@
             android:id="@+id/ll1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_margin="@dimen/_10sdp"
+            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_date_time">
@@ -91,21 +91,21 @@
                 android:layout_width="@dimen/_5sdp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="@dimen/_5sdp"
-                android:background="@color/ColorBlue"/>
+                android:background="@color/colorBlue" />
 
             <EditText
                 android:id="@+id/et_note_sub_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@null"
                 android:ellipsize="end"
                 android:fontFamily="@font/manrope_bold"
                 android:hint="@string/notes_sub_title"
-                android:maxLines="1"
-                android:background="@null"
-                android:padding="@dimen/_10sdp"
                 android:inputType="text"
+                android:maxLines="1"
+                android:padding="@dimen/_10sdp"
                 android:textColor="@color/white"
-                android:textColorHint="@color/ColorGray"
+                android:textColorHint="@color/colorGray"
                 android:textSize="@dimen/_12sdp" />
 
 
@@ -116,22 +116,38 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_10sdp"
+            android:background="@null"
             android:ellipsize="end"
             android:fontFamily="@font/manrope_regular"
             android:hint="@string/notes_desc"
-            android:maxLines="1"
             android:inputType="textMultiLine"
+            android:maxLines="1"
             android:padding="@dimen/_10sdp"
-            android:background="@null"
             android:textColor="@color/white"
-            android:textColorHint="@color/ColorGray"
+            android:textColorHint="@color/colorGray"
             android:textSize="@dimen/_18ssp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ll1" />
 
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
+            <ImageView
+                android:id="@+id/img_more"
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:src="@drawable/ic_more"
+                android:layout_gravity="center"
+                app:tint="@color/white"
 
+                />
+
+        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
