@@ -7,8 +7,14 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.noteapps.R
 import com.example.noteapps.databinding.FragmentHomeBinding
+import com.example.noteapps.local.db.NotesDatabase
+import com.example.noteapps.ui.adapter.NotesAdapter
+import kotlinx.coroutines.launch
 
 
 class HomeFragment : BaseFragment() {
@@ -26,6 +32,16 @@ class HomeFragment : BaseFragment() {
 
         binding.fabCreateNote.setOnClickListener {
             navController.navigate(R.id.action_homeFragment_to_createNoteFragment)
+        }
+
+        binding.recyclerView.setHasFixedSize(true)
+        binding.recyclerView.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+
+        launch {
+            context?.let {
+                val notes = NotesDatabase.getDatabase(it).noteDao().getAllNotes()
+                binding.recyclerView.adapter = NotesAdapter(notes)
+            }
         }
     }
 
