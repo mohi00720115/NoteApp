@@ -17,5 +17,17 @@
         android:id="@+id/createNoteFragment"
         android:name="com.example.noteapps.ui.CreateNoteFragment"
         android:label="CreateNoteFragment"
-        tools:layout="@layout/fragment_create_note" />
+        tools:layout="@layout/fragment_create_note" >
+        <action
+            android:id="@+id/action_createNoteFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_createNoteFragment_to_noteBottomSheetFragment"
+            app:destination="@id/noteBottomSheetFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/noteBottomSheetFragment"
+        android:name="com.example.noteapps.ui.NoteBottomSheetFragment"
+        tools:layout="@layout/fragment_notes_bottom_sheet"
+        android:label="NoteBottomSheetFragment" />
 </navigation>
