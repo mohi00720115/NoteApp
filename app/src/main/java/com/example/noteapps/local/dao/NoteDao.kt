@@ -9,8 +9,8 @@ import com.example.noteapps.local.entity.Notes
 
 @Dao
 interface NoteDao {
-    @get:Query("SELECT * FROM Notes ORDER BY id DESC")
-    val allNotes: List<Notes>
+    @Query("SELECT * FROM Notes ORDER BY id DESC")
+    suspend fun getAllNotes(): List<Notes>
 
     @Insert(onConflict = REPLACE)
     suspend fun insertNotes(note: Notes)
