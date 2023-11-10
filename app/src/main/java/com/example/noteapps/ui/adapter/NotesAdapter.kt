@@ -4,7 +4,6 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.noteapps.R
 import com.example.noteapps.databinding.ItemRvNoteBinding
 import com.example.noteapps.local.entity.Notes
 
@@ -21,7 +20,6 @@ class NotesAdapter(private var arrList: List<Notes>) : RecyclerView.Adapter<Note
 
     override fun getItemCount(): Int = arrList.size
 
-
     class NotesViewHolder(private val binding: ItemRvNoteBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bindItem(item: Notes) {
             binding.apply {
@@ -31,7 +29,7 @@ class NotesAdapter(private var arrList: List<Notes>) : RecyclerView.Adapter<Note
                 if (item.color != null) {
                     cardViewItem.setBackgroundColor(Color.parseColor(item.color))
                 } else {
-                    cardViewItem.setBackgroundColor(Color.parseColor(R.color.colorLightBlack.toString()))
+                        cardViewItem.setBackgroundColor(Color.parseColor("#171c26"))
                 }
             }
         }
