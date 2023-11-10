@@ -78,6 +78,7 @@ class CreateNoteFragment : BaseFragment() {
                 notes.subTitle = etNoteSubTitle.text.toString()
                 notes.noteText = etNoteDesc.text.toString()
                 notes.dateTime = currentDate
+                notes.color = selectedColor
                 context?.let {
                     NotesDatabase.getDatabase(it).noteDao().insertNotes(notes)
                     //خالی کردن ادیت تکست ها بعد از وارد کردن متن هامون
