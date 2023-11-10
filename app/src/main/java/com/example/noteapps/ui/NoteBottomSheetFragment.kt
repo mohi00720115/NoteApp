@@ -45,7 +45,7 @@ class NoteBottomSheetFragment : BottomSheetDialogFragment() {
         if (behavior is BottomSheetBehavior<*>) {
             behavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                    TODO()
+                    TODO("Note yet impl")
                 }
 
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -78,6 +78,7 @@ class NoteBottomSheetFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding = DataBindingUtil.bind(view)!!
         navController = findNavController()
+        setListener()
 
     }
 
