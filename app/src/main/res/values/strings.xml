@@ -2,7 +2,10 @@
     <string name="app_name">NotesApp</string>
     <string name="notes">My Notes</string>
     <string name="notes_title">Notes Title</string>
+    <string name="add_image">Add Image</string>
+    <string name="pick_color">Pick Color</string>
     <string name="date">Date</string>
+    <string name="storage_permission_text">This app needs access to your storage</string>
     <string name="notes_sub_title">Notes Sub Title</string>
     <string name="notes_desc">Enter Notes Here</string>
     <string name="search">Search your notes</string>
