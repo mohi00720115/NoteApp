@@ -111,13 +111,101 @@
 
 
         </LinearLayout>
-        
+
         <ImageView
             android:id="@+id/img_note"
             android:layout_width="match_parent"
+            android:layout_height="@dimen/_300sdp"
+            android:visibility="gone"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            app:layout_constraintTop_toBottomOf="@id/ll1" />
+
+        <LinearLayout
+            android:id="@+id/layout_webUrl"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/ll1"
-            app:layout_constraintBottom_toTopOf="@id/et_note_desc"/>
+            android:orientation="vertical"
+            android:background="@color/colorPrimary"
+            android:padding="@dimen/_10sdp"
+            android:visibility="gone"
+            android:layout_margin="@dimen/_10sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/img_note">
+
+            <EditText
+                android:id="@+id/et_web_link"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:background="@null"
+                android:ellipsize="end"
+                android:text="@string/http"
+                android:fontFamily="@font/manrope_regular"
+                android:hint="@string/web_url"
+                android:inputType="textMultiLine"
+                android:maxLines="1"
+                android:padding="@dimen/_10sdp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/colorGray"
+                android:textSize="@dimen/_18ssp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:gravity="end"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30sp"
+                    android:fontFamily="@font/manrope_bold"
+                    android:background="@color/colorAccent"
+                    android:text="@string/cancel"
+                    android:textAllCaps="false"
+                    android:textSize="@dimen/_12sdp"
+                    android:textColor="@color/white" />
+
+                <Button
+                    android:id="@+id/btn_ok"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/_30sdp"
+                    android:fontFamily="@font/manrope_bold"
+                    android:background="@color/colorAccent"
+                    android:text="@string/ok"
+                    android:textSize="@dimen/_12sdp"
+                    android:textAllCaps="false"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:textColor="@color/white" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_web_link"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:ellipsize="end"
+            android:fontFamily="@font/manrope_bold"
+            android:hint="@string/date"
+            android:inputType="text"
+            android:visibility="gone"
+            android:padding="@dimen/_10sdp"
+            android:textColor="@color/colorGray"
+            android:textColorHint="@color/colorGray"
+            android:textSize="@dimen/_12sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_webUrl" />
+
 
         <EditText
             android:id="@+id/et_note_desc"
@@ -136,22 +224,22 @@
             android:textSize="@dimen/_18ssp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ll1" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_web_link" />
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
             <ImageView
                 android:id="@+id/img_more"
                 android:layout_width="@dimen/_24sdp"
                 android:layout_height="@dimen/_24sdp"
-                android:src="@drawable/img_bar"
                 android:layout_gravity="center"
-                app:tint="@color/white"/>
+                android:src="@drawable/img_bar"
+                app:tint="@color/white" />
 
         </FrameLayout>
 
