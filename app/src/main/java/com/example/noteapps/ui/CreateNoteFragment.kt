@@ -9,8 +9,10 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +30,7 @@ import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.regex.Pattern
 
 
 class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, EasyPermissions.RationaleCallbacks {
@@ -67,6 +70,22 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
                 navController.navigate(R.id.action_createNoteFragment_to_noteBottomSheetFragment)
             }
 
+            btnOk.setOnClickListener {
+                if (etWebLink.text.toString().trim().isNotEmpty()) {
+                    checkWebUrl()
+                } else {
+                    showToast("Url is Required")
+                }
+            }
+
+            btnCancel.setOnClickListener {
+                layoutWebUrl.visibility = View.GONE
+            }
+
+            tvWebLink.setOnClickListener {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(etWebLink.text.toString()))
+                startActivity(intent)
+            }
 
         }
 
@@ -76,29 +95,44 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
         binding.apply {
             if (etNoteTitle.text.isNullOrEmpty()) {
                 showToast("Note Title is Required")
-            }
-            if (etNoteSubTitle.text.isNullOrEmpty()) {
+            } else if (etNoteSubTitle.text.isNullOrEmpty()) {
                 showToast("Note Sub Title is Required")
-            }
-            if (etNoteDesc.text.isNullOrEmpty()) {
+            } else if (etNoteDesc.text.isNullOrEmpty()) {
                 showToast("Note Description is Required")
-            }
-            launch {
-                val notes = Notes()
-                notes.title = etNoteTitle.text.toString()
-                notes.subTitle = etNoteSubTitle.text.toString()
-                notes.noteText = etNoteDesc.text.toString()
-                notes.dateTime = currentDate
-                notes.color = selectedColor
-                context?.let {
-                    NotesDatabase.getDatabase(it).noteDao().insertNotes(notes)
-                    //خالی کردن ادیت تکست ها بعد از وارد کردن متن هامون
-                    etNoteTitle.setText("")
-                    etNoteSubTitle.setText("")
-                    etNoteDesc.setText("")
+            } else {
+                launch {
+                    val notes = Notes()
+                    notes.title = etNoteTitle.text.toString()
+                    notes.subTitle = etNoteSubTitle.text.toString()
+                    notes.noteText = etNoteDesc.text.toString()
+                    notes.dateTime = currentDate
+                    notes.color = selectedColor
+                    notes.imgPath = selectedImagePath
+                    notes.webLink = webLink
+                    context?.let {
+                        NotesDatabase.getDatabase(it).noteDao().insertNotes(notes)
+                        //خالی کردن ادیت تکست ها بعد از وارد کردن متن هامون
+                        etNoteTitle.setText("")
+                        etNoteSubTitle.setText("")
+                        etNoteDesc.setText("")
+                        imgNote.visibility = View.GONE
+                        tvWebLink.visibility = View.GONE
+
+                    }
                 }
             }
+        }
+    }
 
+    private fun checkWebUrl() {
+        if (Patterns.WEB_URL.matcher(binding.etWebLink.text.toString()).matches()) {
+            binding.layoutWebUrl.visibility = View.GONE
+            binding.etWebLink.isEnabled = false
+            webLink = binding.etWebLink.text.toString()
+            binding.tvWebLink.visibility = View.VISIBLE
+            binding.tvWebLink.text = binding.etWebLink.text.toString()
+        } else {
+            showToast("Url is not valid")
         }
     }
 
@@ -139,9 +173,19 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
 
                 "Image" -> {
                     readStorageTask()
+                    binding.layoutWebUrl.visibility = View.GONE
                 }
 
-                else -> {}
+                "WebUrl" -> {
+                    binding.layoutWebUrl.visibility = View.VISIBLE
+                }
+
+                else -> {
+                    binding.imgNote.visibility = View.GONE
+                    binding.layoutWebUrl.visibility = View.GONE
+                    selectedColor = p1.getStringExtra("selectedColor")!!
+                    binding.colorView.setBackgroundColor(Color.parseColor(selectedColor))
+                }
             }
         }
     }
@@ -185,12 +229,26 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
         }
     }
 
+    private fun getPathFromUri(contentUri: Uri): String? {
+        val filePath: String?
+        val cursor = requireActivity().contentResolver.query(contentUri, null, null, null, null)
+        if (cursor == null) {
+            filePath = contentUri.path
+        } else {
+            cursor.moveToFirst()
+            val index = cursor.getColumnIndex("_data")
+            filePath = cursor.getString(index)
+            cursor.close()
+        }
+        return filePath
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE_IMAGE && resultCode == RESULT_OK){
-            if (data != null){
+        if (requestCode == REQUEST_CODE_IMAGE && resultCode == RESULT_OK) {
+            if (data != null) {
                 var selectedImageUrl = data.data
-                if (selectedImageUrl != null){
+                if (selectedImageUrl != null) {
                     try {
                         var inputStream = requireActivity().contentResolver.openInputStream(selectedImageUrl)
                         var bitmap = BitmapFactory.decodeStream(inputStream)
@@ -198,8 +256,8 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
                         binding.imgNote.visibility = View.VISIBLE
 
 //                        binding.ll1.visibility = View.VISIBLE
-//                        selectedImagePath = getPathFromUri(selectedImageUrl)!!
-                    }catch (e:Exception){
+                        selectedImagePath = getPathFromUri(selectedImageUrl)!!
+                    } catch (e: Exception) {
                         showToast(e.message!!)
                     }
 
