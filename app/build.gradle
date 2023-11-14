@@ -62,6 +62,8 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1'
     //Easy permission
     implementation 'pub.devrel:easypermissions:3.0.0'
+    //Rounded Image view
+    implementation 'com.makeramen:roundedimageview:2.3.0'
 
 
 }
