@@ -21,6 +21,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.noteapps.R
 import com.example.noteapps.databinding.FragmentCreateNoteBinding
 import com.example.noteapps.local.db.NotesDatabase
@@ -30,7 +31,6 @@ import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.regex.Pattern
 
 
 class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, EasyPermissions.RationaleCallbacks {
@@ -42,7 +42,9 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
     private var REQUEST_CODE_IMAGE = 456
     private var selectedImagePath = ""
     private var webLink = ""
+    private var isEdit = ""
     private var noteId = -1
+    val args: CreateNoteFragmentArgs by navArgs()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_create_note, container, false)
@@ -54,6 +56,34 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
         binding = DataBindingUtil.bind(view)!!
         navController = findNavController()
         with(binding) {
+
+
+            if (args.noteId != -1) {
+                launch {
+                    context?.let {
+                        var notes = NotesDatabase.getDatabase(it).noteDao().getSpecificNote(args.noteId)
+                        colorView.setBackgroundColor(Color.parseColor(notes.color))
+                        etNoteTitle.setText(notes.title)
+                        etNoteSubTitle.setText(notes.subTitle)
+                        etNoteDesc.setText(notes.noteText)
+                        if (!notes.imgPath.isNullOrEmpty()) {
+                            imgNote.setImageBitmap(BitmapFactory.decodeFile(notes.imgPath))
+                            imgNote.visibility = View.VISIBLE
+                        } else {
+                            imgNote.visibility = View.GONE
+                        }
+
+                        if (!notes.webLink.isNullOrEmpty()) {
+                            tvWebLink.text = notes.webLink
+                            tvWebLink.visibility = View.VISIBLE
+                        } else {
+                            tvWebLink.visibility = View.GONE
+                        }
+                    }
+                }
+            }
+
+
             LocalBroadcastManager.getInstance(requireContext())
                 .registerReceiver(broadcastReceiver, IntentFilter("bottom_sheet_action"))
             val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
