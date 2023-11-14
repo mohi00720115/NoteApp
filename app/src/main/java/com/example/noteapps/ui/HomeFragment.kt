@@ -12,12 +12,14 @@ import com.example.noteapps.R
 import com.example.noteapps.databinding.FragmentHomeBinding
 import com.example.noteapps.local.db.NotesDatabase
 import com.example.noteapps.ui.adapter.NotesAdapter
+import com.example.noteapps.ui.adapter.NotesAdapter.OnItemClickListener
 import kotlinx.coroutines.launch
 
 
 class HomeFragment : BaseFragment() {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var navController: NavController
+    private lateinit var notesAdapter: NotesAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_home, container, false)
@@ -27,6 +29,7 @@ class HomeFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding = DataBindingUtil.bind(view)!!
         navController = findNavController()
+        notesAdapter = NotesAdapter()
 
         binding.fabCreateNote.setOnClickListener {
             navController.navigate(R.id.action_homeFragment_to_createNoteFragment)
@@ -38,9 +41,24 @@ class HomeFragment : BaseFragment() {
         launch {
             context?.let {
                 val notes = NotesDatabase.getDatabase(it).noteDao().getAllNotes()
-                binding.recyclerView.adapter = NotesAdapter(notes)
+                binding.recyclerView.adapter = notesAdapter
+                notesAdapter.setData(notes)
             }
         }
+
+        notesAdapter.setOnClickListener(onClicked)
+    }
+
+    fun setOnClickListener(listener1: OnItemClickListener) {
+
+    }
+
+    private val onClicked = object : NotesAdapter.OnItemClickListener {
+        override fun onClicked(notesId: Int) {
+            val action = HomeFragmentDirections.actionHomeFragmentToCreateNoteFragment(notesId)
+            navController.navigate(action)
+        }
+
     }
 
 }
