@@ -9,7 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.noteapps.databinding.ItemRvNoteBinding
 import com.example.noteapps.local.entity.Notes
 
-class NotesAdapter(private var arrList: List<Notes>) : RecyclerView.Adapter<NotesAdapter.NotesViewHolder>() {
+class NotesAdapter() : RecyclerView.Adapter<NotesAdapter.NotesViewHolder>() {
+    var listener: OnItemClickListener? = null
+    var arrList = ArrayList<Notes>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotesAdapter.NotesViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ItemRvNoteBinding.inflate(inflater, parent, false)
@@ -22,7 +24,15 @@ class NotesAdapter(private var arrList: List<Notes>) : RecyclerView.Adapter<Note
 
     override fun getItemCount(): Int = arrList.size
 
-    class NotesViewHolder(private val binding: ItemRvNoteBinding) : RecyclerView.ViewHolder(binding.root) {
+    fun setData(arrNotesList: List<Notes>) {
+        arrList = arrNotesList as ArrayList<Notes>
+    }
+
+    fun setOnClickListener(listener1: OnItemClickListener) {
+        listener = listener1
+    }
+
+    inner class NotesViewHolder(private val binding: ItemRvNoteBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bindItem(item: Notes) {
             binding.apply {
                 tvTitle.text = item.title
@@ -48,7 +58,15 @@ class NotesAdapter(private var arrList: List<Notes>) : RecyclerView.Adapter<Note
                     tvWebLink.visibility = View.GONE
                 }
 
+                cardViewItem.setOnClickListener {
+                    listener?.onClicked(item.id!!)
+                }
+
             }
         }
+    }
+
+    interface OnItemClickListener {
+        fun onClicked(notesId: Int)
     }
 }
