@@ -1,7 +1,9 @@
 package com.example.noteapps.ui.adapter
 
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.noteapps.databinding.ItemRvNoteBinding
@@ -29,8 +31,23 @@ class NotesAdapter(private var arrList: List<Notes>) : RecyclerView.Adapter<Note
                 if (item.color != null) {
                     cardViewItem.setBackgroundColor(Color.parseColor(item.color))
                 } else {
-                        cardViewItem.setBackgroundColor(Color.parseColor("#171c26"))
+                    cardViewItem.setBackgroundColor(Color.parseColor("#171c26"))
                 }
+
+                if (item.imgPath != null) {
+                    imgNote.setImageBitmap(BitmapFactory.decodeFile(item.imgPath))
+                    imgNote.visibility = View.VISIBLE
+                } else {
+                    imgNote.visibility = View.GONE
+                }
+
+                if (item.webLink != null) {
+                    tvWebLink.text = item.webLink
+                    tvWebLink.visibility = View.VISIBLE
+                } else {
+                    tvWebLink.visibility = View.GONE
+                }
+
             }
         }
     }
