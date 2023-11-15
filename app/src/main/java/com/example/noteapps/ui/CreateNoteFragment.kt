@@ -102,7 +102,10 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
 
             imgDone.setOnClickListener {
                 if (args.noteId != -1) {
-                    updateNote()
+                    /**
+                     * فانکشن invokeOnCompletion میگه هر زمان که job کارش تمام شد بیاد فلان کارو بکنه
+                     */
+                    updateNote().invokeOnCompletion { navController.popBackStack() }
                 } else {
                     saveNote()
                 }
@@ -171,7 +174,7 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
     }
 
 
-    private fun updateNote() {
+    private fun updateNote() =
         launch {
             with(binding) {
                 context?.let {
@@ -194,7 +197,7 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
                 }
             }
         }
-    }
+
 
     private fun saveNote() {
         binding.apply {
