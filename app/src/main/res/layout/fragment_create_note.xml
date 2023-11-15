@@ -112,45 +112,91 @@
 
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/img_note"
+        <RelativeLayout
+            android:id="@+id/layoutImage"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_300sdp"
+            android:layout_height="wrap_content"
             android:visibility="gone"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginEnd="@dimen/_10sdp"
-            app:layout_constraintTop_toBottomOf="@id/ll1" />
+            app:layout_constraintTop_toBottomOf="@id/ll1">
+
+            <ImageView
+                android:id="@+id/imgNote"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_300sdp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/imgDelete"
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:layout_marginEnd="@dimen/_15sdp"
+                android:src="@drawable/ic_delete"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+        <!--        <ImageView
+                    android:id="@+id/img_note"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_300sdp"
+                    android:visibility="gone"
+                    android:layout_marginStart="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    app:layout_constraintTop_toBottomOf="@id/ll1" />-->
 
         <LinearLayout
             android:id="@+id/layout_webUrl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_margin="@dimen/_10sdp"
             android:background="@color/colorPrimary"
+            android:orientation="vertical"
             android:padding="@dimen/_10sdp"
             android:visibility="gone"
-            android:layout_margin="@dimen/_10sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/img_note">
+            app:layout_constraintTop_toBottomOf="@+id/layoutImage">
 
-            <EditText
-                android:id="@+id/et_web_link"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/_10sdp"
-                android:background="@null"
-                android:ellipsize="end"
-                android:text="@string/http"
-                android:fontFamily="@font/manrope_regular"
-                android:hint="@string/web_url"
-                android:inputType="textMultiLine"
-                android:maxLines="1"
-                android:padding="@dimen/_10sdp"
-                android:textColor="@color/white"
-                android:textColorHint="@color/colorGray"
-                android:textSize="@dimen/_18ssp" />
+                android:layout_marginTop="@dimen/_10sdp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="visible">
+
+                <EditText
+                    android:id="@+id/et_web_link"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/manrope_regular"
+                    android:hint="@string/web_url"
+                    android:inputType="textMultiLine"
+                    android:maxLines="1"
+                    android:padding="@dimen/_10sdp"
+                    android:text="@string/http"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/colorGray"
+                    android:textSize="@dimen/_18ssp" />
+
+                <ImageView
+                    android:id="@+id/imgUrl_cancel"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:src="@drawable/ic_cancel"
+                    android:visibility="gone" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -162,50 +208,67 @@
                 <Button
                     android:id="@+id/btn_cancel"
                     android:layout_width="wrap_content"
-                    android:layout_height="30sp"
-                    android:fontFamily="@font/manrope_bold"
+                    android:layout_height="@dimen/_50sdp"
                     android:background="@color/colorAccent"
+                    android:fontFamily="@font/manrope_bold"
                     android:text="@string/cancel"
                     android:textAllCaps="false"
-                    android:textSize="@dimen/_12sdp"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12sdp" />
 
                 <Button
                     android:id="@+id/btn_ok"
                     android:layout_width="wrap_content"
-                    android:layout_height="@dimen/_30sdp"
-                    android:fontFamily="@font/manrope_bold"
-                    android:background="@color/colorAccent"
-                    android:text="@string/ok"
-                    android:textSize="@dimen/_12sdp"
-                    android:textAllCaps="false"
+                    android:layout_height="@dimen/_50sdp"
                     android:layout_marginStart="@dimen/_5sdp"
-                    android:textColor="@color/white" />
+                    android:background="@color/colorAccent"
+                    android:fontFamily="@font/manrope_bold"
+                    android:text="@string/ok"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12sdp" />
 
             </LinearLayout>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tv_web_link"
+        <LinearLayout
+            android:id="@+id/layout_tv_web_link"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_marginEnd="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_5sdp"
-            android:ellipsize="end"
-            android:fontFamily="@font/manrope_bold"
-            android:hint="@string/date"
-            android:inputType="text"
-            android:visibility="gone"
-            android:padding="@dimen/_10sdp"
-            android:textColor="@color/colorGray"
-            android:textColorHint="@color/colorGray"
-            android:textSize="@dimen/_12sdp"
+            android:gravity="center"
+            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layout_webUrl" />
+            app:layout_constraintTop_toBottomOf="@+id/layout_webUrl">
 
+            <TextView
+                android:id="@+id/tv_web_link"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:fontFamily="@font/manrope_bold"
+                android:hint="@string/date"
+                android:inputType="text"
+                android:padding="@dimen/_10sdp"
+                android:textColor="@color/colorGray"
+                android:textColorHint="@color/colorGray"
+                android:textSize="@dimen/_12sdp"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/imgUrl_delete"
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:src="@drawable/ic_delete"
+                android:visibility="gone" />
+
+        </LinearLayout>
 
         <EditText
             android:id="@+id/et_note_desc"
@@ -224,7 +287,8 @@
             android:textSize="@dimen/_18ssp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_web_link" />
+            app:layout_constraintTop_toBottomOf="@+id/layout_tv_web_link" />
+
 
         <FrameLayout
             android:layout_width="match_parent"
