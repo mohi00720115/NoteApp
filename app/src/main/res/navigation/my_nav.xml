@@ -33,5 +33,10 @@
         android:id="@+id/noteBottomSheetFragment"
         android:name="com.example.noteapps.ui.NoteBottomSheetFragment"
         tools:layout="@layout/fragment_notes_bottom_sheet"
-        android:label="NoteBottomSheetFragment" />
+        android:label="NoteBottomSheetFragment" >
+        <argument
+            android:name="noteId"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </dialog>
 </navigation>
