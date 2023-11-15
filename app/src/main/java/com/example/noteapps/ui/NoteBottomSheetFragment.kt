@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.noteapps.R
 import com.example.noteapps.databinding.FragmentNotesBottomSheetBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -19,6 +20,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 class NoteBottomSheetFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentNotesBottomSheetBinding
     private lateinit var navController: NavController
+    private val args: NoteBottomSheetFragmentArgs by navArgs()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_notes_bottom_sheet, container, false)
@@ -78,6 +80,11 @@ class NoteBottomSheetFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding = DataBindingUtil.bind(view)!!
         navController = findNavController()
+        if (args.noteId != -1) {
+            binding.layoutDeleteNote.visibility = View.VISIBLE
+        } else {
+            binding.layoutDeleteNote.visibility = View.GONE
+        }
         setListener()
 
     }
@@ -177,6 +184,13 @@ class NoteBottomSheetFragment : BottomSheetDialogFragment() {
         binding.layoutWebUrl.setOnClickListener {
             val intent = Intent("bottom_sheet_action")
             intent.putExtra("action", "WebUrl")
+            LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)
+            dismiss()
+        }
+
+        binding.layoutDeleteNote.setOnClickListener {
+            val intent = Intent("bottom_sheet_action")
+            intent.putExtra("action", "DeleteNote")
             LocalBroadcastManager.getInstance(requireContext()).sendBroadcast(intent)
             dismiss()
         }
