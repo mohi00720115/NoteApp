@@ -1,9 +1,11 @@
 package com.example.noteapps.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
@@ -66,6 +68,10 @@ class HomeFragment : BaseFragment() {
                 }
                 notesAdapter.setData(tempArr)
                 notesAdapter.notifyDataSetChanged()
+                //بستن کیبورد زمانی که کاربر روی سرچ کلیک کرد
+                val inputMethodManager =
+                    requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputMethodManager.hideSoftInputFromWindow(binding.searchView.windowToken, 0)
                 return true
             }
         })
