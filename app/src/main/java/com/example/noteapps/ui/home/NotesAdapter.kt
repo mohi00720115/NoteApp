@@ -1,4 +1,4 @@
-package com.example.noteapps.ui.adapter
+package com.example.noteapps.ui.home
 
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -7,12 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.noteapps.databinding.ItemRvNoteBinding
-import com.example.noteapps.local.entity.Notes
+import com.example.noteapps.data.local.entity.Notes
 
 class NotesAdapter() : RecyclerView.Adapter<NotesAdapter.NotesViewHolder>() {
     var listener: OnItemClickListener? = null
-    var arrList = ArrayList<Notes>()
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotesAdapter.NotesViewHolder {
+    var arrList = listOf<Notes>()
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotesViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ItemRvNoteBinding.inflate(inflater, parent, false)
         return NotesViewHolder(binding)
@@ -25,7 +25,7 @@ class NotesAdapter() : RecyclerView.Adapter<NotesAdapter.NotesViewHolder>() {
     override fun getItemCount(): Int = arrList.size
 
     fun setData(arrNotesList: List<Notes>) {
-        arrList = arrNotesList as ArrayList<Notes>
+        arrList = arrNotesList
     }
 
     fun setOnClickListener(listener1: OnItemClickListener) {
