@@ -16,7 +16,9 @@ import com.example.noteapps.R
 import com.example.noteapps.databinding.FragmentNotesBottomSheetBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class NoteBottomSheetFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentNotesBottomSheetBinding
     private lateinit var navController: NavController
@@ -27,15 +29,6 @@ class NoteBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     private var selectedColor = "#171C26"
-
-    companion object {
-        fun newInstant(): NoteBottomSheetFragment {
-            val args = Bundle()
-            val fragment = NoteBottomSheetFragment()
-            fragment.arguments = args
-            return fragment
-        }
-    }
 
     override fun setupDialog(dialog: Dialog, style: Int) {
         super.setupDialog(dialog, style)
