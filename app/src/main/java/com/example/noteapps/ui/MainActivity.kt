@@ -6,7 +6,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.navigation.NavController
 import com.example.noteapps.R
 import com.example.noteapps.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
