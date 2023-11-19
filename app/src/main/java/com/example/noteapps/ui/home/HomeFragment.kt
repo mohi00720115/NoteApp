@@ -1,4 +1,4 @@
-package com.example.noteapps.ui
+package com.example.noteapps.ui.home
 
 import android.content.Context
 import android.os.Bundle
@@ -8,23 +8,29 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.SearchView
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.noteapps.R
+import com.example.noteapps.data.local.entity.Notes
 import com.example.noteapps.databinding.FragmentHomeBinding
-import com.example.noteapps.local.db.NotesDatabase
-import com.example.noteapps.local.entity.Notes
-import com.example.noteapps.ui.adapter.NotesAdapter
-import com.example.noteapps.ui.adapter.NotesAdapter.OnItemClickListener
+import com.example.noteapps.ui.BaseFragment
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.Locale
 
 
-class HomeFragment : BaseFragment() {
+@AndroidEntryPoint
+class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private lateinit var navController: NavController
     private lateinit var notesAdapter: NotesAdapter
+    private val viewModel: HomeViewModel by viewModels()
     var arrNotes = ArrayList<Notes>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -44,14 +50,7 @@ class HomeFragment : BaseFragment() {
         binding.recyclerView.setHasFixedSize(true)
         binding.recyclerView.layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
 
-        launch {
-            context?.let {
-                val notes = NotesDatabase.getDatabase(it).noteDao().getAllNotes()
-                binding.recyclerView.adapter = notesAdapter
-                notesAdapter.setData(notes)
-                arrNotes = notes as ArrayList<Notes>
-            }
-        }
+        getAllNotes()
 
         notesAdapter.setOnClickListener(onClicked)
 
@@ -77,16 +76,24 @@ class HomeFragment : BaseFragment() {
         })
     }
 
-    fun setOnClickListener(listener1: OnItemClickListener) {
-
-    }
-
     private val onClicked = object : NotesAdapter.OnItemClickListener {
         override fun onClicked(notesId: Int) {
             val action = HomeFragmentDirections.actionHomeFragmentToCreateNoteFragment(notesId)
             navController.navigate(action)
         }
 
+    }
+
+    private fun getAllNotes() {
+        viewModel.getAllNotes()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.getAllNote.collect {
+                    notesAdapter.setData(it)
+                    binding.recyclerView.adapter = notesAdapter
+                }
+            }
+        }
     }
 
 }
