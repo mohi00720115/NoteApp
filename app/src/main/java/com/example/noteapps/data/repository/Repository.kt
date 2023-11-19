@@ -19,9 +19,9 @@ class Repository @Inject constructor(private val noteDao: NoteDao) {
         emit(noteDao.insertNotes(note))
     }
 
-    suspend fun deleteNote(note: Notes) = flow {
-        emit(noteDao.deleteNote(note))
-    }
+//    suspend fun deleteNote(note: Notes) = flow {
+//        emit(noteDao.deleteNote(note))
+//    }
 
     suspend fun deleteSpecificNote(id: Int) = flow {
         emit(noteDao.deleteSpecificNote(id))

@@ -16,11 +16,14 @@ interface NoteDao {
     @Query("SELECT * FROM Notes WHERE id =:id")
     suspend fun getSpecificNote(id: Int): Notes
 
+    /**
+     * ساختن نوت
+     */
     @Insert(onConflict = REPLACE)
     suspend fun insertNotes(note: Notes)
 
-    @Delete
-    suspend fun deleteNote(note: Notes)
+//    @Delete
+//    suspend fun deleteNote(note: Notes)
 
     @Query("DELETE FROM Notes WHERE id =:id")
     suspend fun deleteSpecificNote(id: Int)
