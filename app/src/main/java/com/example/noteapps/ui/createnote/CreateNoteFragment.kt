@@ -1,9 +1,10 @@
-package com.example.noteapps.ui
+package com.example.noteapps.ui.createnote
 
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.BroadcastReceiver
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -12,20 +13,30 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.noteapps.R
 import com.example.noteapps.databinding.FragmentCreateNoteBinding
-import com.example.noteapps.local.db.NotesDatabase
-import com.example.noteapps.local.entity.Notes
+import com.example.noteapps.util.Const.SELECTED_COLOR
+import com.example.noteapps.util.clearFields
+import com.example.noteapps.util.goneLayout
+import com.example.noteapps.util.showToast
+import com.example.noteapps.util.visibleLayout
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
@@ -33,9 +44,11 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 
-class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, EasyPermissions.RationaleCallbacks {
+@AndroidEntryPoint
+class CreateNoteFragment : Fragment(), EasyPermissions.PermissionCallbacks, EasyPermissions.RationaleCallbacks {
     private lateinit var binding: FragmentCreateNoteBinding
     private lateinit var navController: NavController
+    private val viewModel: CreateNoteViewModel by viewModels()
     private var currentDate: String? = null
     var selectedColor = "#171C26"
     private var READ_STORAGE_PERM = 123
@@ -55,43 +68,10 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
         super.onViewCreated(view, savedInstanceState)
         binding = DataBindingUtil.bind(view)!!
         navController = findNavController()
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = viewModel
 
         with(binding) {
-            if (args.noteId != -1) {
-                launch {
-                    context?.let {
-                        val notes = NotesDatabase.getDatabase(it).noteDao().getSpecificNote(args.noteId)
-                        colorView.setBackgroundColor(Color.parseColor(notes.color))
-                        etNoteTitle.setText(notes.title)
-                        etNoteSubTitle.setText(notes.subTitle)
-                        etNoteDesc.setText(notes.noteText)
-                        if (!notes.imgPath.isNullOrEmpty()) {
-                            selectedImagePath = notes.imgPath!!
-                            imgNote.setImageBitmap(BitmapFactory.decodeFile(notes.imgPath))
-                            layoutImage.visibility = View.VISIBLE
-                            imgNote.visibility = View.VISIBLE
-                            imgDelete.visibility = View.VISIBLE
-                        } else {
-                            layoutImage.visibility = View.GONE
-                            imgNote.visibility = View.GONE
-                            imgDelete.visibility = View.GONE
-                        }
-
-                        if (!notes.webLink.isNullOrEmpty()) {
-                            imgUrlDelete.visibility = View.VISIBLE
-                            webLink = notes.webLink!!
-                            tvWebLink.text = notes.webLink
-                            layoutWebUrl.visibility = View.VISIBLE
-                            etWebLink.setText(notes.webLink)
-                            imgUrlCancel.visibility = View.VISIBLE
-                        } else {
-                            layoutWebUrl.visibility = View.GONE
-                            imgUrlCancel.visibility = View.GONE
-                        }
-                    }
-                }
-            }
-
 
             LocalBroadcastManager.getInstance(requireContext())
                 .registerReceiver(broadcastReceiver, IntentFilter("bottom_sheet_action"))
@@ -102,17 +82,18 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
 
             imgDone.setOnClickListener {
                 if (args.noteId != -1) {
-                    /**
-                     * فانکشن invokeOnCompletion میگه هر زمان که job کارش تمام شد بیاد فلان کارو بکنه
-                     */
-                    updateNote().invokeOnCompletion { navController.popBackStack() }
+                    updateNote2()
+                    Log.e(TAG, "updateNote2: ${args.noteId}")
                 } else {
-                    saveNote()
+                    saveNote2()
+                    Log.e(TAG, "saveNote2: ${args.noteId}")
                 }
+                navController.popBackStack()
             }
 
             imgBack.setOnClickListener {
-                navController.navigate(R.id.action_createNoteFragment_to_homeFragment)
+//                navController.navigate(R.id.action_createNoteFragment_to_homeFragment)
+                navController.popBackStack()
             }
 
             imgMore.setOnClickListener {
@@ -145,15 +126,12 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
 
             imgUrlDelete.setOnClickListener {
                 webLink = ""
-                tvWebLink.visibility = View.GONE
-                imgUrlDelete.visibility = View.GONE
+                goneLayout(tvWebLink, imgUrlDelete)
             }
 
             imgUrlCancel.setOnClickListener {
                 webLink = ""
-                tvWebLink.visibility = View.GONE
-                imgUrlCancel.visibility = View.GONE
-                layoutWebUrl.visibility = View.GONE
+                goneLayout(tvWebLink, imgUrlCancel, layoutImage)
             }
 
             tvWebLink.setOnClickListener {
@@ -163,18 +141,12 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
         }
     }
 
-    private fun deleteNote() {
-        launch {
-            binding.apply {
-                context?.let {
-                    NotesDatabase.getDatabase(it).noteDao().deleteSpecificNote(args.noteId)
-                }
-            }
-        }
+    private fun deleteNote2() {
+        viewModel.deleteSpecificNote(args.noteId)
     }
 
 
-    private fun updateNote() =
+    /*private fun updateNote() =
         launch {
             with(binding) {
                 context?.let {
@@ -196,42 +168,41 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
                     layoutImage.visibility = View.GONE
                 }
             }
-        }
+        }*/
 
+    /*    private fun saveNote() {
+            binding.apply {
+                if (etNoteTitle.text.isNullOrEmpty()) {
+                    showToast("Note Title is Required")
+                } else if (etNoteSubTitle.text.isNullOrEmpty()) {
+                    showToast("Note Sub Title is Required")
+                } else if (etNoteDesc.text.isNullOrEmpty()) {
+                    showToast("Note Description is Required")
+                } else {
+                    launch {
+                        val notes = Notes()
+                        notes.title = etNoteTitle.text.toString()
+                        notes.subTitle = etNoteSubTitle.text.toString()
+                        notes.noteText = etNoteDesc.text.toString()
+                        notes.dateTime = currentDate
+                        notes.color = selectedColor
+                        notes.imgPath = selectedImagePath
+                        notes.webLink = webLink
+                        context?.let {
+                            NotesDatabase.getDatabase(it).noteDao().insertNotes(notes)
+                            //خالی کردن ادیت تکست ها بعد از وارد کردن متن هامون
+                            etNoteTitle.setText("")
+                            etNoteSubTitle.setText("")
+                            etNoteDesc.setText("")
+                            imgNote.visibility = View.GONE
+                            tvWebLink.visibility = View.GONE
+                            layoutImage.visibility = View.GONE
 
-    private fun saveNote() {
-        binding.apply {
-            if (etNoteTitle.text.isNullOrEmpty()) {
-                showToast("Note Title is Required")
-            } else if (etNoteSubTitle.text.isNullOrEmpty()) {
-                showToast("Note Sub Title is Required")
-            } else if (etNoteDesc.text.isNullOrEmpty()) {
-                showToast("Note Description is Required")
-            } else {
-                launch {
-                    val notes = Notes()
-                    notes.title = etNoteTitle.text.toString()
-                    notes.subTitle = etNoteSubTitle.text.toString()
-                    notes.noteText = etNoteDesc.text.toString()
-                    notes.dateTime = currentDate
-                    notes.color = selectedColor
-                    notes.imgPath = selectedImagePath
-                    notes.webLink = webLink
-                    context?.let {
-                        NotesDatabase.getDatabase(it).noteDao().insertNotes(notes)
-                        //خالی کردن ادیت تکست ها بعد از وارد کردن متن هامون
-                        etNoteTitle.setText("")
-                        etNoteSubTitle.setText("")
-                        etNoteDesc.setText("")
-                        imgNote.visibility = View.GONE
-                        tvWebLink.visibility = View.GONE
-                        layoutImage.visibility = View.GONE
-
+                        }
                     }
                 }
             }
-        }
-    }
+        }*/
 
     private fun checkWebUrl() {
         if (Patterns.WEB_URL.matcher(binding.etWebLink.text.toString()).matches()) {
@@ -247,64 +218,63 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(p0: Context?, p1: Intent?) {
-            val actionColor = p1!!.getStringExtra("action")
+            with(binding) {
+                val actionColor = p1!!.getStringExtra("action")
 
-            when (actionColor!!) {
-                "Blue" -> {
-                    selectedColor = p1.getStringExtra("selectedColor")!!
-                    binding.colorView.setBackgroundColor(Color.parseColor(selectedColor))
-                }
+                when (actionColor!!) {
 
-                "Yellow" -> {
-                    selectedColor = p1.getStringExtra("selectedColor")!!
-                    binding.colorView.setBackgroundColor(Color.parseColor(selectedColor))
-                }
+                    "Blue" -> {
+                        getStringAndSetBackground(p1, colorView)
+                    }
 
-                "Purple" -> {
-                    selectedColor = p1.getStringExtra("selectedColor")!!
-                    binding.colorView.setBackgroundColor(Color.parseColor(selectedColor))
-                }
+                    "Yellow" -> {
+                        getStringAndSetBackground(p1, colorView)
+                    }
 
-                "Green" -> {
-                    selectedColor = p1.getStringExtra("selectedColor")!!
-                    binding.colorView.setBackgroundColor(Color.parseColor(selectedColor))
-                }
+                    "Purple" -> {
+                        getStringAndSetBackground(p1, colorView)
+                    }
 
-                "Orange" -> {
-                    selectedColor = p1.getStringExtra("selectedColor")!!
-                    binding.colorView.setBackgroundColor(Color.parseColor(selectedColor))
-                }
+                    "Green" -> {
+                        getStringAndSetBackground(p1, colorView)
+                    }
 
-                "Black" -> {
-                    selectedColor = p1.getStringExtra("selectedColor")!!
-                    binding.colorView.setBackgroundColor(Color.parseColor(selectedColor))
-                }
+                    "Orange" -> {
+                        getStringAndSetBackground(p1, colorView)
+                    }
 
-                "Image" -> {
-                    readStorageTask()
-                    binding.layoutWebUrl.visibility = View.GONE
-                }
+                    "Black" -> {
+                        getStringAndSetBackground(p1, colorView)
+                    }
 
-                "WebUrl" -> {
-                    binding.layoutWebUrl.visibility = View.VISIBLE
-                }
+                    "Image" -> {
+                        readStorageTask()
+                        goneLayout(layoutWebUrl)
+                    }
 
-                "DeleteNote" -> {
-                    deleteNote()
-                    //TODO -> Crash
-                    navController.popBackStack()
-//                    requireActivity().supportFragmentManager.popBackStack()
-                }
+                    "WebUrl" -> {
+                        visibleLayout(layoutWebUrl)
+                    }
 
-                else -> {
-                    binding.imgNote.visibility = View.GONE
-                    binding.layoutWebUrl.visibility = View.GONE
-                    selectedColor = p1.getStringExtra("selectedColor")!!
-                    binding.colorView.setBackgroundColor(Color.parseColor(selectedColor))
-                    binding.layoutImage.visibility = View.GONE
+                    "DeleteNote" -> {
+                        deleteNote2()
+                        //TODO -> Crash
+//                        navController.navigate(R.id.action_createNoteFragment_to_homeFragment)
+                        navController.popBackStack()
+                    }
+
+                    else -> {
+                        getStringAndSetBackground(p1, colorView)
+                        goneLayout(imgNote, layoutWebUrl, layoutImage)
+                    }
                 }
             }
         }
+    }
+
+    private fun getStringAndSetBackground(intent: Intent, view: View) {
+        selectedColor = intent.getStringExtra(SELECTED_COLOR).toString()
+        view.setBackgroundColor(Color.parseColor(selectedColor))
     }
 
     override fun onDestroy() {
@@ -312,14 +282,8 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
         super.onDestroy()
     }
 
-    private fun showToast(toastText: String) = Toast.makeText(requireContext(), toastText, Toast.LENGTH_SHORT).show()
-
     private fun hasReadStoragePerm(): Boolean {
         return EasyPermissions.hasPermissions(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-    }
-
-    private fun hasWriteStoragePerm(): Boolean {
-        return EasyPermissions.hasPermissions(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }
 
     /**
@@ -376,7 +340,6 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
                     } catch (e: Exception) {
                         showToast(e.message!!)
                     }
-
                 }
             }
         }
@@ -405,4 +368,82 @@ class CreateNoteFragment : BaseFragment(), EasyPermissions.PermissionCallbacks, 
         TODO("Not yet implemented")
     }
 
+    private fun specificNote() {
+        viewModel.specificNote(args.noteId)
+        if (args.noteId != -1) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    viewModel.specificNote.collect { notes ->
+                        with(binding) {
+                            colorView.setBackgroundColor(Color.parseColor(notes.color))
+                            clearFields(etNoteTitle, etNoteSubTitle, etNoteDesc)
+                            if (!notes.imgPath.isNullOrEmpty() || !notes.webLink.isNullOrEmpty()) {
+                                selectedImagePath = notes.imgPath!!
+                                imgNote.setImageBitmap(BitmapFactory.decodeFile(notes.imgPath))
+                                webLink = notes.webLink!!
+                                tvWebLink.text = notes.webLink
+                                etWebLink.setText(notes.webLink)
+                                visibleLayout(layoutImage, imgNote, imgDelete, layoutWebUrl, imgUrlCancel)
+                            } else {
+                                goneLayout(layoutImage, imgNote, imgDelete, layoutWebUrl, imgUrlCancel)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun updateNote2(): Job {
+//        specificNote()
+        return viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.specificNote.collect { notes ->
+                    specificNote()
+                    with(binding) {
+                        notes.title = etNoteTitle.text.toString()
+                        notes.subTitle = etNoteSubTitle.text.toString()
+                        notes.noteText = etNoteDesc.text.toString()
+                        notes.dateTime = currentDate
+                        notes.color = selectedColor
+                        notes.imgPath = selectedImagePath
+                        notes.webLink = webLink
+                        viewModel!!.updateNote(notes)
+                        //خالی کردن ادیت تکست ها بعد از وارد کردن متن هامون
+                        clearFields(etNoteTitle, etNoteSubTitle, etNoteDesc)
+                        goneLayout(imgNote, tvWebLink, layoutImage)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun saveNote2() {
+        with(binding) {
+            if (!viewModel!!.check()) {
+                showToast("لطفا تمام مقادیر را پر کنید")
+            } else {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        viewModel!!.specificNote.collect { notes ->
+                            viewModel!!.insertNotes(notes)
+                            notes.title = etNoteTitle.text.toString()
+                            notes.subTitle = etNoteSubTitle.text.toString()
+                            notes.noteText = etNoteDesc.text.toString()
+                            Log.e(TAG, "T=${notes.title} ")
+                            Log.e(TAG, "S=${notes.subTitle} ")
+                            Log.e(TAG, "D=${notes.noteText} ")
+                            notes.dateTime = currentDate
+                            notes.color = selectedColor
+                            notes.imgPath = selectedImagePath
+                            notes.webLink = webLink
+                            clearFields(etNoteTitle, etNoteSubTitle, etNoteDesc)
+                            goneLayout(imgNote, tvWebLink, layoutImage)
+                        }
+                    }
+                }
+            }
+
+        }
+    }
 }
