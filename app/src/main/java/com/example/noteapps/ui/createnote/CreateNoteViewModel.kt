@@ -23,15 +23,22 @@ class CreateNoteViewModel @Inject constructor(private val repository: Repository
     val noteSubTitle = MutableStateFlow<String>("")
     val noteDesc = MutableStateFlow<String>("")
 
-    fun check() {
+    fun check(): Boolean {
+        return if (noteTitle.value.isEmpty() || noteSubTitle.value.isEmpty() || noteDesc.value.isEmpty()) {
+            Log.e(TAG, "noteTitle.value: ${noteTitle.value}")
+            Log.e(TAG, "noteSubTitle.value: ${noteSubTitle.value}")
+            Log.e(TAG, "noteDesc.value: ${noteDesc.value}")
+            false
+        }else true
+
+    }
+
+    fun insertNotes(note: Notes) {
         viewModelScope.launch {
-            if (noteTitle.value.isEmpty()) {
-                Log.e(TAG, "noteTitle: ${noteTitle.value}")
-            } else if (noteSubTitle.value.isEmpty()) {
-                Log.e(TAG, "noteSubTitle: ${noteSubTitle.value}")
-            } else if (noteDesc.value.isEmpty()) {
-                Log.e(TAG, "noteDesc: ${noteDesc.value}")
-            }
+            noteTitle.value = note.title.toString()
+            noteSubTitle.value = note.subTitle.toString()
+            noteDesc.value = note.noteText.toString()
+            repository.insertNotes(note).collect()
         }
     }
 
@@ -43,11 +50,6 @@ class CreateNoteViewModel @Inject constructor(private val repository: Repository
         }
     }
 
-    fun insertNotes(note: Notes) {
-        viewModelScope.launch {
-            repository.insertNotes(note).collect()
-        }
-    }
 
     fun deleteSpecificNote(id: Int) {
         viewModelScope.launch {
