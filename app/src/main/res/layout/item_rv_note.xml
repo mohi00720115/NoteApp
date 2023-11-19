@@ -57,7 +57,7 @@
                     android:layout_marginBottom="@dimen/_5sdp"
                     android:ellipsize="end"
                     android:fontFamily="@font/manrope_bold"
-                    android:hint="@string/date"
+                    android:hint="@string/web_link"
                     android:inputType="text"
                     android:visibility="visible"
                     android:padding="@dimen/_10sdp"
