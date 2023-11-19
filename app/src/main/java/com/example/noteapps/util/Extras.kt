@@ -2,6 +2,7 @@ package com.example.noteapps.util
 
 import android.view.View
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 
@@ -31,4 +32,11 @@ fun clearFields(vararg etText: EditText) {
  */
 fun Fragment.showToast(message: String) {
     Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+}
+
+/**
+ * نمایش چیزی که می خوام در ایمیج ویو نشون بدم
+ */
+fun Fragment.imgSetImageResource(vararg img: ImageView) {
+    img.forEach { it.setImageResource(0) }
 }
